@@ -1,0 +1,3 @@
+Los modelos topicos se han convertido en herramientas precisas que tienen el fin de identificar la estructuta temática latente de una colección de doumentos de texto. Por su eficiencia en tareas de comprensión de textos, análisis de contenido
+
+ Cada tópico identificado por estos modelos está representado por un conjunto de palabras ponderadas en función de su probabilidad de aparición en textos donde dicho tópico es relevante. Estos modelos han sido ampliamente estudiados en las últimas dos décadas y son utilizados comunmente en tareas de comprensión de textos y análisis de contenido.
