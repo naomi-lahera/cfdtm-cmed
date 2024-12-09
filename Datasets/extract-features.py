@@ -27,10 +27,10 @@ with open(os.path.join(output_path, "time2id.txt"), "w") as f:
 train_time = [time2id[time] for time, info in train_texts.items()]
 test_time = [time2id[time] for time, info in test_texts.items()]
 
-with open(os.path.join(output_path, "train_time.txt"), "w") as f:
+with open(os.path.join(output_path, "train_times.txt"), "w") as f:
     for elemento in train_time:
         f.write(str(elemento) + "\n")
-with open(os.path.join(output_path, "test_time.txt"), "w") as f:
+with open(os.path.join(output_path, "test_times.txt"), "w") as f:
     for elemento in test_time:
         f.write(str(elemento) + "\n")
 
