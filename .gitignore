@@ -1,4 +1,4 @@
 .venv/
 temporary-files
-PDFs/
-Texts/
+data/
+jsonlist/

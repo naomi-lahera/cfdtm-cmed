@@ -1,108 +1,100 @@
-import joblib
+# import topmost
+
+# import joblib
 import json
 import os
 
-output_path = 'features'
-os.makedirs(output_path, exist_ok=True)
-
-input_path = 'Datasets (manual)'
-train_texts_path = os.path.join(input_path, 'train', 'train_texts.joblib')
-test_texts_path = os.path.join(input_path, 'test', 'test_texts.joblib')
-
-# Cargando textos
-train_texts = joblib.load(train_texts_path)
-test_texts = joblib.load(test_texts_path)
-
-#Asigando id a cada uno de los segmentos de tiempo
-time2id = dict()
-time_index = 0
-for time in set(list(train_texts.keys()) + list(test_texts.keys())):
-    time2id[time] = time_index
-    time_index += 1
-print(time2id)
-with open(os.path.join(output_path, "time2id.txt"), "w") as f:
-    f.write(str(time2id))
-    
-# Construyendo archivo de tiempos -train -test
-train_time = [time2id[time] for time, info in train_texts.items()]
-test_time = [time2id[time] for time, info in test_texts.items()]
-
-with open(os.path.join(output_path, "train_times.txt"), "w") as f:
-    for elemento in train_time:
-        f.write(str(elemento) + "\n")
-with open(os.path.join(output_path, "test_times.txt"), "w") as f:
-    for elemento in test_time:
-        f.write(str(elemento) + "\n")
-
-# Construyendo train.jsonlist y test.jsonlist
-train_jsonlist = []
-for time, texts in train_texts.items():
-    train_jsonlist.extend([{"text": text} for text in texts])
-# train_texts = [{"text": info} for time, info in train_texts.items()]
-
-
-test_jsonlist = []
-for time, texts in train_texts.items():
-    test_jsonlist.extend([{"text": text} for text in texts])
-# test_texts = [{"text": info} for time, info in test_texts.items()]
-
-
-with open(os.path.join(input_path, "train.jsonlist"), "w") as f:
-    for record in train_jsonlist:
-        # Convertir el diccionario a JSON y escribir una línea
-        f.write(json.dumps(record) + "\n")
-        
-with open(os.path.join(input_path, "test.jsonlist"), "w") as f:
-    for record in test_jsonlist:
-        f.write(json.dumps(record) + "\n")
-        
-        
-#-----------------------------------------------TopMOst------------------------------------------------------------#
 import nltk
 from nltk.corpus import stopwords
 
-from topmost.data import download_20ng
+# from topmost.data import download_20ng
 from topmost.preprocessing import Preprocessing
 
-nltk.download('stopwords')
-stopwords_es = set(stopwords.words('spanish'))
-# print(stopwords_es) 
-
-
-# preprocess raw data
-preprocessing = Preprocessing(min_term=5, stopwords=stopwords_es)
-import os
+# import os
 from topmost.data import file_utils
 from topmost.utils.logger import Logger
 
 
-logger = Logger("WARNING")
+def time2id(_texts: dict, output_path):
+    time2id = dict()
+    time_index = 0
+    
+    for time in list(_texts.keys()):
+        time2id[time] = time_index
+        time_index += 1
+    print(time2id)
+    with open(os.path.join(output_path, "time2id.txt"), "w") as f:
+        f.write(str(time2id))
 
-def preprocess_jsonlist(dataset_dir, label_name=None):
-      train_items = file_utils.read_jsonlist(os.path.join(dataset_dir, 'train.jsonlist'))
-      test_items = file_utils.read_jsonlist(os.path.join(dataset_dir, 'test.jsonlist'))
+    return time2id
 
-      logger.info(f"Found training documents {len(train_items)} testing documents {len(test_items)}")
+def build_times(time2id, _texts, output_path, subset: str = 'train'):    
+    # Construyendo archivo de tiempos -train -test
+    train_time = [time2id[time] for time, info in _texts.items()]
 
-      raw_train_texts = []
-      train_labels = None
-      raw_test_texts = []
-      test_labels = None
-      
-      for item in train_items:
-          raw_train_texts.append(item['text'])
-          if label_name is not None:
-              train_labels.append(item[label_name])
+    with open(os.path.join(output_path, f"{subset}_times.txt"), "w") as f:
+        for elemento in train_time:
+            f.write(str(elemento) + "\n")
 
-      for item in test_items:
-          raw_test_texts.append(item['text'])
-          if label_name is not None:
-              test_labels.append(item[label_name])
+    
+def build_jsonlist(_path: str, _texts: dict, subset: str = 'train'):
+    _jsonlist = []
+    for time, texts in _texts.items():
+        _jsonlist.extend([{"text": text} for text in texts])
 
-      rst = preprocessing.preprocess(raw_train_texts, train_labels, raw_test_texts, test_labels)
-      return rst
+    with open(os.path.join(_path, f"{subset}.jsonlist"), "w") as f:
+        for record in _jsonlist:
+            f.write(json.dumps(record) + "\n")
+    
+    return _jsonlist
+    
 
-rst = preprocess_jsonlist(dataset_dir='./datasets/CMedjsonlist')
+if __name__ == '__main__':
+    input_path = 'Ciencias-Médicas/data/Texts'
+    jsonlist_path = 'Ciencias-Médicas/jsonlists'
+    output_path = 'Ciencias-Médicas/CMed'
+    
+    os.makedirs(jsonlist_path, exist_ok=True)
+    os.makedirs(output_path, exist_ok=True)
 
-preprocessing.save('./datasets/CMed', **rst)
+    with open(os.path.join(input_path, 'train_texts.json'), 'r') as f:
+        train_texts: dict = json.load(f)
+    
+    with open(os.path.join(input_path, 'train_texts.json'), 'r') as f:
+        test_texts: dict = json.load(f)
+    
+    _time2id = time2id(train_texts, output_path)
+    
+    build_times(_time2id, train_texts, output_path)
+    build_jsonlist(jsonlist_path, train_texts)
+    
+    build_times(_time2id, test_texts, output_path, 'test')
+    build_jsonlist(jsonlist_path, test_texts, 'test')
+
+    
+    nltk.download('stopwords')
+    stopwords_es = set(stopwords.words('spanish'))
+
+    preprocessing = Preprocessing(min_term=5, stopwords=stopwords_es)
+    logger = Logger("WARNING")
+    
+    train_items = file_utils.read_jsonlist(os.path.join(jsonlist_path, 'train.jsonlist'))
+    test_items = file_utils.read_jsonlist(os.path.join(jsonlist_path, 'test.jsonlist'))
+    
+    logger.info(f"Found training documents {len(train_items)} testing documents {len(test_items)}")
+    
+    raw_train_texts = []
+    train_labels = None
+    raw_test_texts = []
+    test_labels = None
+    
+    for item in train_items:
+        raw_train_texts.append(item['text'])
+    for item in test_items:
+        raw_test_texts.append(item['text'])
+        
+    rst = preprocessing.preprocess(raw_train_texts, None, raw_test_texts, None)
+    preprocessing.save(output_path, **rst)
+    
+    
         
