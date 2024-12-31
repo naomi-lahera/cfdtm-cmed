@@ -1,18 +1,18 @@
 # import topmost
 
-# import joblib
+import joblib
 import json
 import os
 
-import nltk
-from nltk.corpus import stopwords
+# import nltk
+# from nltk.corpus import stopwords
 
-# from topmost.data import download_20ng
-from topmost.preprocessing import Preprocessing
+# # from topmost.data import download_20ng
+# from topmost.preprocessing import Preprocessing
 
-# import os
-from topmost.data import file_utils
-from topmost.utils.logger import Logger
+# # import os
+# from topmost.data import file_utils
+# from topmost.utils.logger import Logger
 
 
 def time2id(_texts: dict, output_path):
@@ -28,9 +28,12 @@ def time2id(_texts: dict, output_path):
 
     return time2id
 
-def build_times(time2id, _texts, output_path, subset: str = 'train'):    
+def build_times(time2id, _texts, output_path, subset: str = 'train'):   
+    train_time = [] 
     # Construyendo archivo de tiempos -train -test
-    train_time = [time2id[time] for time, info in _texts.items()]
+    for time, info in _texts.items():
+        train_time.extend([time2id[time]]*len(info))
+    # train_time = [time2id[time] for time, info in _texts.items()]
 
     with open(os.path.join(output_path, f"{subset}_times.txt"), "w") as f:
         for elemento in train_time:
@@ -57,44 +60,49 @@ if __name__ == '__main__':
     os.makedirs(jsonlist_path, exist_ok=True)
     os.makedirs(output_path, exist_ok=True)
 
-    with open(os.path.join(input_path, 'train_texts.json'), 'r') as f:
-        train_texts: dict = json.load(f)
+    # with open(os.path.join(input_path, 'train_texts.json'), 'r') as f:
+        # train_texts: dict = json.load(f)
     
-    with open(os.path.join(input_path, 'train_texts.json'), 'r') as f:
-        test_texts: dict = json.load(f)
+    # with open(os.path.join(input_path, 'test_texts.json'), 'r') as f:
+        # test_texts: dict = json.load(f)
+        
+    train_texts = joblib.load(os.path.join(input_path, 'train_texts.json'))
+    test_texts = joblib.load(os.path.join(input_path, 'test_texts.json'))
     
     _time2id = time2id(train_texts, output_path)
     
     build_times(_time2id, train_texts, output_path)
-    build_jsonlist(jsonlist_path, train_texts)
+    # build_jsonlist(jsonlist_path, train_texts)
     
     build_times(_time2id, test_texts, output_path, 'test')
-    build_jsonlist(jsonlist_path, test_texts, 'test')
+    # build_jsonlist(jsonlist_path, test_texts, 'test')
 
     
-    nltk.download('stopwords')
-    stopwords_es = set(stopwords.words('spanish'))
+    # nltk.download('stopwords')
+    # stopwords_es = set(stopwords.words('spanish'))
 
-    preprocessing = Preprocessing(min_term=5, stopwords=stopwords_es)
-    logger = Logger("WARNING")
+    # preprocessing = Preprocessing(min_term=5, stopwords=stopwords_es)
+    # logger = Logger("WARNING")
     
-    train_items = file_utils.read_jsonlist(os.path.join(jsonlist_path, 'train.jsonlist'))
-    test_items = file_utils.read_jsonlist(os.path.join(jsonlist_path, 'test.jsonlist'))
+    # train_items = file_utils.read_jsonlist(os.path.join(jsonlist_path, 'train.jsonlist'))
+    # test_items = file_utils.read_jsonlist(os.path.join(jsonlist_path, 'test.jsonlist'))
     
-    logger.info(f"Found training documents {len(train_items)} testing documents {len(test_items)}")
+    # logger.info(f"Found training documents {len(train_items)} testing documents {len(test_items)}")
     
-    raw_train_texts = []
-    train_labels = None
-    raw_test_texts = []
-    test_labels = None
+    # raw_train_texts = []
+    # train_labels = None
+    # raw_test_texts = []
+    # test_labels = None
     
-    for item in train_items:
-        raw_train_texts.append(item['text'])
-    for item in test_items:
-        raw_test_texts.append(item['text'])
+    # for item in train_items:
+        # raw_train_texts.append(item['text'])
+    # for item in test_items:
+        # raw_test_texts.append(item['text'])
         
-    rst = preprocessing.preprocess(raw_train_texts, None, raw_test_texts, None)
-    preprocessing.save(output_path, **rst)
+    # rst = preprocessing.preprocess(raw_train_texts, None, raw_test_texts, None)
+    # preprocessing.save(output_path, **rst)
     
     
         
+        
+#   1.4.2

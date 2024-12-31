@@ -1,4 +1,8 @@
 .venv/
 temporary-files
-data/
+Datasets/Ciencias-Médicas/data/
+TopMost-main/data/
+TopMost-main/tutorials/
+TopMost-main/docs/
+TopMost-main/tests/
 jsonlist/
