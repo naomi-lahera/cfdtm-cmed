@@ -106,26 +106,66 @@ class Tokenizer:
         return unigrams
 
 
+# def make_word_embeddings(vocab, language='en'):
+#     glove_vectors = gensim.downloader.load('glove-wiki-gigaword-200')
+#     word_embeddings = np.zeros((len(vocab), glove_vectors.vectors.shape[1]))
+
+#     num_found = 0
+
+#     try:
+#         key_word_list = glove_vectors.index_to_key
+#     except:
+#         key_word_list = glove_vectors.index2word
+
+#     for i, word in enumerate(tqdm(vocab, desc="loading word embeddings")):
+#         if word in key_word_list:
+#             word_embeddings[i] = glove_vectors[word]
+#             num_found += 1
+
+#     logger.info(f'number of found embeddings: {num_found}/{len(vocab)}')
+
+#     return scipy.sparse.csr_matrix(word_embeddings)
+
+from gensim.models import KeyedVectors
+
 def make_word_embeddings(vocab):
-    glove_vectors = gensim.downloader.load('glove-wiki-gigaword-200')
-    word_embeddings = np.zeros((len(vocab), glove_vectors.vectors.shape[1]))
+    # descargar el modelo !wget -q https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.es.300.vec.gz
+    pretreined_WE = KeyedVectors.load_word2vec_format('cc.es.300.vec.gz')
+    word_embeddings = np.zeros((len(vocab), 300))
 
     num_found = 0
-
-    try:
-        key_word_list = glove_vectors.index_to_key
-    except:
-        key_word_list = glove_vectors.index2word
-
+    
+    key_word_list = set(pretrained_WE.key_to_index.keys())
+    
     for i, word in enumerate(tqdm(vocab, desc="loading word embeddings")):
         if word in key_word_list:
-            word_embeddings[i] = glove_vectors[word]
+            word_embeddings[i] = pretreined_WE[word]
             num_found += 1
-
+    
     logger.info(f'number of found embeddings: {num_found}/{len(vocab)}')
 
     return scipy.sparse.csr_matrix(word_embeddings)
 
+# import openai
+# openai.api_key = "AIzaSyAiWLAiziUUqN7a0SY2F7EbPnle6OxLr5I"
+
+# def make_word_embeddings_openai(vocab):
+    # pretreined_WE = KeyedVectors.load_word2vec_format('cc.es.300.vec.gz')
+    # word_embeddings = np.zeros((len(vocab), glove_vectors.vectors.shape[1]))
+
+    # num_found = 0
+    
+    # for i, word in enumerate(tqdm(vocab, desc="loading word embeddings")):
+        # response = openai.Embedding.create(
+            # input=f"{word }",
+            # model="text-embedding-ada-002"
+        # )
+        # word_embeddings[i] = response['data'][0]['embedding']
+        # num_found += 1
+    
+    # logger.info(f'number of found embeddings: {num_found}/{len(vocab)}')
+
+    # return scipy.sparse.csr_matrix(word_embeddings)
 
 class Preprocessing:
     def __init__(self,
@@ -336,7 +376,7 @@ class Preprocessing:
             logger.info(f"Real testing size: {len(rst['test_texts'])} \t avg length: {rst['test_bow'].sum() / len(rst['test_texts']):.3f}")
 
         if pretrained_WE:
-            rst['word_embeddings'] = make_word_embeddings(vocab)
+            rst['word_embeddings'] = make_word_embeddings(vocab, language)
 
         return rst
 
