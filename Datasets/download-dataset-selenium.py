@@ -16,33 +16,33 @@ def get_docs(url, download_path, errors_path, i):
     global errors
     driver.get(url)
     
-    # div_issues_per_year = []
-    # j = 1
-    # while j <= 11:
-        # try:
-            # div_issues_per_year.append(driver.find_element(By.XPATH, f'//*[@id="issues"]/div[{j}]'))
-            # j+=2
-        # except:
-            # break
+    div_issues_per_year = []
+    j = 1
+    while j <= 11:
+        try:
+            div_issues_per_year.append(driver.find_element(By.XPATH, f'//*[@id="issues"]/div[{j}]'))
+            j+=2
+        except:
+            break
     
-    years_issues_dict = joblib.load(f'{path}/years_issues_dict_{i}.joblib')
+    # years_issues_dict = joblib.load(f'{path}/years_issues_dict_{i}.joblib')
     # print(years_issues_dict)
     
-    # years_issues_dict = dict()
-    # for item in div_issues_per_year:
-        # year = item.find_element(By.TAG_NAME, 'h3').text
-        # print(year)
-        # os.makedirs(os.path.join(download_path, year), exist_ok=True)
-        # years_issues_dict[year] = []
+    years_issues_dict = dict()
+    for item in div_issues_per_year:
+        year = item.find_element(By.TAG_NAME, 'h3').text
+        print(year)
+        os.makedirs(os.path.join(download_path, year), exist_ok=True)
+        years_issues_dict[year] = []
         
-        # for element in tqmd(item.find_elements(By.XPATH, './/*[starts-with(@id, "issue-")]'), desc="Descargando los enlaces para accedera cada una de las paginas correspondientes a cada documento"):
-            # href = element.find_element(By.TAG_NAME, 'a').get_attribute('href')
-            # print(href)
-            # years_issues_dict[year].append(href)
+        for element in tqdm(item.find_elements(By.XPATH, './/*[starts-with(@id, "issue-")]'), desc="Descargando los enlaces para accedera cada una de las paginas correspondientes a cada documento"):
+            href = element.find_element(By.TAG_NAME, 'a').get_attribute('href')
+            print(href)
+            years_issues_dict[year].append(href)
             
-        # print(len(years_issues_dict[year]))
+        print(len(years_issues_dict[year]))
         
-    # joblib.dump(years_issues_dict, f'{path}/years_issues_dict_{i}.joblib')
+    joblib.dump(years_issues_dict, f'{path}/years_issues_dict_{i}.joblib')
     # print('var: years_issues_dict saved ✅')
     
     year_doclink_dict = dict()
@@ -170,9 +170,9 @@ if __name__ == '__main__':
     urls = [
         # 'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=1#issues'
         # , 
-        'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=2#issues',
-        # 'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=3#issues',
-        # 'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=4#issues'
+        #'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=2#issues',
+        #  'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=3#issues',
+        'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=4#issues'
         ]
     
     download_path = 'Ciencias-Médicas/data/PDF'
