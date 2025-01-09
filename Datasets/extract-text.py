@@ -1,85 +1,73 @@
+import pymupdf4llm
 import os
-import fitz 
+import re
+from unicodedata import normalize
 import joblib
-import json
+import  json
+from tqdm import tqdm
+import traceback
 
-import pdfplumber
-
-def extract_text(path, subset: str):
-    _texts = dict()
-    time_slices = os.listdir(os.path.join(path, subset))
-    # print(time_slices)
-    
-    for time in time_slices:
-        _texts[time] = []
+def extract_text(pdf_path, errors_path, error_data):    
+    md_read = pymupdf4llm.LlamaMarkdownReader()
+    try:
+        data = md_read.load_data(pdf_path)
+    except Exception as e:
+        # count = len(os.listdir(errors_path))
+        error_info = {
+        "error_type": type(e).__name__,  # Tipo de la excepción (e.g., ZeroDivisionError)
+        "error_message": str(e),        # Mensaje del error
+        "stack_trace": traceback.format_exc()  # Traza completa del error
+        }
+        new_error_path = os.path.join(errors_path, error_data["year"], error_data["label"])
+        os.makedirs(new_error_path, exist_ok=True)
+        try:
+            with open(os.path.join(new_error_path, f'errors.json'), 'r') as f:
+                errors: list = json.load(f)
+        except:
+            errors = []
+                
+        errors.append({"error": error_info, "pdf_path": pdf_path})
         
-        pdf_files = [os.path.join(path, subset, time, file) for file in os.listdir(os.path.join(path, subset, time)) if file.endswith('.pdf')]
-
-        for file_path in pdf_files:
-            try:
-                with pdfplumber.open(file_path) as pdf:
-                    text = ""
-                    for page in pdf.pages:
-                        text += page.extract_text()
-                    _texts[time].append(text)
-            except Exception as e:
-                print(f"❌ Error procesando {file_path} con pdfplumber: {e}")
-                continue
-        
-        print(f"{time} done ✅ - {len(_texts[time])} files" )
-        
-
-
-        # for file_path in pdf_files:
-            # # print(f" - Archivo PDF: {file_path}")
-            # try:
-                # doc = fitz.open(file_path)
-                # text = ""
-                # for page_num in range(doc.page_count):
-                    # page = doc[page_num]
-                    # text += page.get_text("text")  # Modo de extracción de texto
-                    # # print(f"Texto de la página {page_num + 1}:\n{text}\n")
-
-                # _texts[time].append(text)
-            # except fitz.fitz.FileDataError:
-                # print(f"❌ Error específico de MuPDF al procesar {file_path}: No default Layer config.")
-                # # Opcional: puedes guardar el nombre del archivo problemático en una lista para referencia
-                # # error_files.append(file_path)
-            # except Exception as e:
-                # print(f"❌ Error general al procesar {file_path}: {e}")
+        with open(os.path.join(new_error_path, f'errors.json'), 'w') as f:
+            json.dump(errors, f)
             
-
-        # print(f"{time} done ✅ - {len(_texts[time])} files" )
+        return None
+                
+    text = ''
+    for page in range(len(data)):
+        text += data[page].to_dict()["text"]
         
-    return _texts if len(_texts) != 0 else None    
-    
-# def build_jsonlist(_path: str, _texts: dict, subset: str):
-    # _jsonlist = []
-    # for time, texts in _texts.items():
-        # _jsonlist.extend([{"text": text} for text in texts])
+    specialChars = "!#$%^&*()"
+    for specialChar in specialChars:
+        text = text.replace(specialChar, ' ')
+        
+    return text
 
-    # with open(os.path.join(_path, f"{subset}.jsonlist"), "w") as f:
-        # for record in _jsonlist:
-            # f.write(json.dumps(record) + "\n")
-                    
+def remove_diacritics(label):
+    current_label = re.sub(
+        r"([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+", r"\1", 
+        normalize( "NFD", label), flags=re.I
+    )
+    return normalize('NFC', current_label)
+
 if __name__ == '__main__':
-    input_path = 'Ciencias-Médicas/data/PDFs'
-    # jsonlist_path = 'jsonlist'
-    output_path = 'Ciencias-Médicas/data/Texts'
-    os.makedirs(output_path, exist_ok=True)
+    input_path = 'Ciencias-Médicas/data/PDF'
+    output_path = 'Ciencias-Médicas/jsonlists'
+    errors_path = 'Ciencias-Médicas/data/Texts/extract-text-errors'
+    os.makedirs(errors_path, exist_ok=True)
     
-    train_texts = extract_text(input_path, 'train')
-    test_texts = extract_text(input_path, 'test')
-    
-    joblib.dump(train_texts, os.path.join(output_path, 'train_texts.joblib'))
-    if train_texts: 
-        with open(os.path.join(output_path, 'train_texts.json'), 'w') as f: 
-            json.dump(train_texts, f)
-                 
-    joblib.dump(test_texts, os.path.join(output_path, 'test_texts.joblib'))        
-    if test_texts: 
-        with open(os.path.join(output_path, 'test_texts.json'), 'w') as f: 
-            json.dump(test_texts, f)  
-              
-    # if train_texts: build_jsonlist(jsonlist_path, train_texts, 'train')
-    # if test_texts: build_jsonlist(jsonlist_path, test_texts, 'test')    
+    jsonlist_per_year_dict = dict()
+    for year in tqdm(os.listdir(input_path), desc='Extracting text from docs'):
+        jsonlist = []
+        for label in os.listdir(os.path.join(input_path, year)):
+            current_label = remove_diacritics(label)
+            for doc in os.listdir(os.path.join(input_path, year, label)):
+                text = extract_text(os.path.join(input_path, year, label, doc), errors_path, error_data={"year": year, "label": label})
+                if not text: continue
+                jsonlist.append({"label": current_label, "text": text})
+        jsonlist_per_year_dict[year] = jsonlist
+        
+    # print([item[:2] for item in list(jsonlist_per_year_dict.items())[:3]])
+    joblib.dump(jsonlist, os.path.join(output_path, f'pre-jsonlist.joblib'))
+    with open(os.path.join(output_path, f'pre-jsonlist.json'), 'w') as f:
+        json.dump(jsonlist_per_year_dict, f)

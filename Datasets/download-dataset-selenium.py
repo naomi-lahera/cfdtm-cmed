@@ -126,18 +126,18 @@ def get_docs(url, download_path, errors_path, i):
         
     return year_jsonlist_dict
 
-def extract_text(pdf_path):
-    md_read = pymupdf4llm.LlamaMarkdownReader()
-    data = md_read.load_data(pdf_path)
-    text = ''
-    for page in range(len(data)):
-        text += data[page].to_dict()["text"]
+# def extract_text(pdf_path):
+#     md_read = pymupdf4llm.LlamaMarkdownReader()
+#     data = md_read.load_data(pdf_path)
+#     text = ''
+#     for page in range(len(data)):
+#         text += data[page].to_dict()["text"]
         
-    specialChars = "!#$%^&*()"
-    for specialChar in specialChars:
-        text = text.replace(specialChar, ' ')
+#     specialChars = "!#$%^&*()"
+#     for specialChar in specialChars:
+#         text = text.replace(specialChar, ' ')
         
-    return text
+#     return text
 
 def fix_errors(path):
     for file in [f for f in os.scandir(path) if f.is_file()]:
