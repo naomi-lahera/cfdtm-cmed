@@ -24,11 +24,10 @@ def get_docs(url, download_path, errors_path, i):
             j+=2
         except:
             break
-    
-    # years_issues_dict = joblib.load(f'{path}/years_issues_dict_{i}.joblib')
-    # print(years_issues_dict)
-    
+        
     years_issues_dict = dict()
+    # years_issues_dict = joblib.load(f'{path}/years_issues_dict_{i}.joblib')
+    
     for item in div_issues_per_year:
         year = item.find_element(By.TAG_NAME, 'h3').text
         print(year)
@@ -42,13 +41,11 @@ def get_docs(url, download_path, errors_path, i):
             
         print(len(years_issues_dict[year]))
         
-    joblib.dump(years_issues_dict, f'{path}/years_issues_dict_{i}.joblib')
-    # print('var: years_issues_dict saved ✅')
+    # joblib.dump(years_issues_dict, f'{path}/years_issues_dict_{i}.joblib')
     
     year_doclink_dict = dict()
-    # year_doclink_dict = joblib.load(f'{path}/year_doclink_dict_{i}.joblib')
     # year_doclink_dict = joblib.load(f'{path}/year_doclink_dict.joblib')
-    done = []
+    
     for year, links in list(years_issues_dict.items()):
         print(year)
         
@@ -73,22 +70,18 @@ def get_docs(url, download_path, errors_path, i):
                     category = '?'
                     
                 category = category.lower().replace(' ', '-')  
-                year_doclink_dict[year].append({"label": category, "link": article_link}) #unidecode quita las tildes y la ñ
-                
-        # print(year_doclink_dict[year])
-        # done.append((year, year_doclink_dict[year]))
-        # joblib.dump(done, f'{path}/done.joblib')
+                year_doclink_dict[year].append({"label": category, "link": article_link})
         
-    joblib.dump(year_doclink_dict, f'{path}/year_doclink_dict_{i}.joblib')
+    # joblib.dump(year_doclink_dict, f'{path}/year_doclink_dict_{i}.joblib')
     
     for label in [json_['label'] for year, jsons in year_doclink_dict.items() for json_ in jsons]:
         os.makedirs(os.path.join(download_path, year, label), exist_ok=True)
     
     year_jsonlist_dict = dict()
     for year, jsons in tqdm(year_doclink_dict.items(), desc="Processing timeslices"):
-        # index = 0
+        index = 0
         jsonlist = []
-        for json_ in jsons: # tqdm(jsons, desc=f"Processing documents at time slice {year}", leave=False):
+        for json_ in jsons:
             os.makedirs(os.path.join(download_path, year, json_['label']), exist_ok=True)
             driver.get(json_['link'])
             link = driver.find_element(By.ID, 'pdfDownloadLink').get_attribute('href')
@@ -99,7 +92,6 @@ def get_docs(url, download_path, errors_path, i):
                     text = requests.get(link).content
                     with open(pdf_path, "wb") as f:
                         f.write(text)
-                    # print(f"PDF descargado con éxito en {pdf_path}. ✅")
                 except Exception as e:
                     print(f"❌ Error al descargar el PDF para '{link}': {e}")
                     print('\\'*50)
@@ -108,36 +100,15 @@ def get_docs(url, download_path, errors_path, i):
                         json.dump({"year": year, "label": json_['label'], "index": index, "downliadLink": link}, file)
 
                     if os.path.isfile(pdf_path):
-                        os.remove(pdf_path)
-                        
+                        os.remove(pdf_path)                
                     errors +=1
                     
-            # text = extract_text(pdf_path)
-            # jsonlist.append({"label": json_['label'], "text": text})
-            
-            # print(json_['label'], text)
-            # input()
-            
             index+=1
             
         year_jsonlist_dict[year] = jsonlist
-        
-    joblib.dump(year_jsonlist_dict, f'{path}/year_jsonlist_dict_{i}.joblib')
-        
+    
+    # joblib.dump(year_jsonlist_dict, f'{path}/year_jsonlist_dict_{i}.joblib')  
     return year_jsonlist_dict
-
-# def extract_text(pdf_path):
-#     md_read = pymupdf4llm.LlamaMarkdownReader()
-#     data = md_read.load_data(pdf_path)
-#     text = ''
-#     for page in range(len(data)):
-#         text += data[page].to_dict()["text"]
-        
-#     specialChars = "!#$%^&*()"
-#     for specialChar in specialChars:
-#         text = text.replace(specialChar, ' ')
-        
-#     return text
 
 def fix_errors(path):
     for file in [f for f in os.scandir(path) if f.is_file()]:
@@ -168,15 +139,14 @@ if __name__ == '__main__':
     driver = webdriver.Chrome(options=options)
 
     urls = [
-        # 'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=1#issues'
-        # , 
-        #'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=2#issues',
-        #  'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=3#issues',
+        'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=1#issues', 
+        'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=2#issues',
+         'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=3#issues',
         'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=4#issues'
         ]
     
     download_path = 'Ciencias-Médicas/data/PDF'
-    errors_path = 'Ciencias-Médicas/data/PDF/errors'
+    errors_path = 'Ciencias-Médicas/data/Texts/download-text-errors'
     os.makedirs(download_path, exist_ok=True)
     os.makedirs(errors_path, exist_ok=True)
     
