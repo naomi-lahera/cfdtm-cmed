@@ -2,6 +2,7 @@ import joblib
 import os
 import random
 import json
+import math
 
 def build_jsonlist(year_label_text_jsons, subset, output_path):
     jsonlist = [{"label": doc["label"], "text": doc["text"]} for doc in year_label_text_jsons]
@@ -17,7 +18,8 @@ def build_subset_times(year_label_text_jsons: list, time2id, subset, output_path
 
 def shuffle_set(jsonlist_per_year: dict):
     year_label_text_json = [{"year": year, "label": doc["label"], "text": doc["text"]} for year, list_ in jsonlist_per_year.items() for doc in list_]
-    return random.shuffle(year_label_text_json)
+    random.shuffle(year_label_text_json)
+    return year_label_text_json
 
 def train_test_split(jsonlists_per_year: dict):
     train_jsonlist_per_year, test_jsonlist_per_year = dict(), dict()
@@ -38,7 +40,7 @@ def train_test_split(jsonlists_per_year: dict):
                 texts_per_label_dict[label].append(text)
                 
         for label, texts in texts_per_label_dict.items():
-            total_train_docs = int(0.7 * len(texts))
+            total_train_docs = math.floor(0.7 * len(texts))
             train_jsonlist_per_year[year].extend([{"label": label, "text": text} for text in texts[:total_train_docs]])
             test_jsonlist_per_year[year].extend([{"label": label, "text": text} for text in texts[total_train_docs:]])
             

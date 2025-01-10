@@ -6,6 +6,7 @@ from unicodedata import normalize
 import pymupdf4llm
 import traceback
 import random
+import math
 
 def time2id(_texts: dict, output_path):
     time2id = dict()
@@ -99,11 +100,11 @@ def extract_text():
 
 def train_test_split():
     jsonlists_per_year = {"2001": 
-                            [{"label": 1, "text": "text 1"}, {"label": 1, "text": "text 2"}],
+                            [{"label": 1, "text": "text 1"}, {"label": 1, "text": "text 2"}, {"label": 1, "text": "text 1"}, {"label": 1, "text": "text 2"}],
                         "2002":
-                            [{"label": 1, "text": "text 3"}, {"label": 2, "text": "text 4"}],
-                        "2002":
-                            [{"label": 3, "text": "text 5"}, {"label": 4, "text": "text 6"}, {"label": 3, "text": "text 5"}]}
+                            [{"label": 1, "text": "text 3"}, {"label": 2, "text": "text 4"}, {"label": 1, "text": "text 3"}, {"label": 2, "text": "text 4"}],
+                        "2003":
+                            [{"label": 3, "text": "text 5"}, {"label": 4, "text": "text 6"}, {"label": 3, "text": "text 5"}, {"label": 4, "text": "text 6"}, {"label": 3, "text": "text 5"}, {"label": 4, "text": "text 6"}, {"label": 3, "text": "text 5"}]}
     
     train_jsonlist_per_year, test_jsonlist_per_year = dict(), dict()
     
@@ -123,7 +124,8 @@ def train_test_split():
                 texts_per_label_dict[label].append(text)
                 
         for label, texts in texts_per_label_dict.items():
-            total_train_docs = int(0.7 * len(texts))
+            total_train_docs = math.floor(0.7 * len(texts))
+            print(total_train_docs)
             train_jsonlist_per_year[year].extend([{"label": label, "text": text} for text in texts[:total_train_docs]])
             test_jsonlist_per_year[year].extend([{"label": label, "text": text} for text in texts[total_train_docs:]])
             
@@ -131,18 +133,21 @@ def train_test_split():
     print("Test: ", test_jsonlist_per_year)
 
 def shuffle_set():
-    jsonlist_per_year = {"2001": 
-                            [{"label": 1, "text": "text 1"}, {"label": 1, "text": "text 2"}],
-                        "2002":
-                            [{"label": 1, "text": "text 3"}, {"label": 2, "text": "text 4"}],
-                        "2002":
-                            [{"label": 3, "text": "text 5"}, {"label": 4, "text": "text 6"}, {"label": 3, "text": "text 5"}]}
+    jsonlist_per_year = {'2001': [{'label': 1, 'text': 'text 1'}, {'label': 1, 'text': 'text 2'}], '2002': [{'label': 1, 'text': 'text 3'}, {'label': 2, 'text': 'text 4'}], '2003': [{'label': 3, 'text': 'text 5'}, {'label': 3, 'text': 'text 5'}, {'label': 4, 'text': 'text 6'}, {'label': 4, 'text': 'text 6'}]}
+    # jsonlist_per_year = {"2001": 
+                            # [{"label": 1, "text": "text 1"}, {"label": 1, "text": "text 2"}, {"label": 1, "text": "text 1"}, {"label": 1, "text": "text 2"}],
+                        # "2002":
+                            # [{"label": 1, "text": "text 3"}, {"label": 2, "text": "text 4"}],
+                        # "2002":
+                            # [{"label": 3, "text": "text 5"}, {"label": 4, "text": "text 6"}, {"label": 3, "text": "text 5"}]}
     
     year_label_text_json = [{"year": year, "label": doc["label"], "text": doc["text"]} for year, list_ in jsonlist_per_year.items() for doc in list_]
-    return random.shuffle(year_label_text_json)
+    # print(year_label_text_json)
+    random.shuffle(year_label_text_json)
+    print(year_label_text_json)
 
 def build_subset_times():
-    year_label_text_jsons = [{"year": "2001", "label": 3, "text": "text 5"}]
+    year_label_text_jsons = [{'year': '2003', 'label': 4, 'text': 'text 6'}, {'year': '2002', 'label': 1, 'text': 'text 3'}, {'year': '2003', 'label': 3, 'text': 'text 5'}, {'year': '2003', 'label': 4, 'text': 'text 6'}, {'year': '2001', 'label': 1, 'text': 'text 2'}, {'year': '2003', 'label': 3, 'text': 'text 5'}, {'year': '2002', 'label': 2, 'text': 'text 4'}, {'year': '2001', 'label': 1, 'text': 'text 1'}]
     time2id = {"2001": 0, "2002": 1, "2003": 2}
     subset = 'train'
     output_path = path
@@ -153,7 +158,7 @@ def build_subset_times():
             f.write(str(elemento) + "\n")
 
 def build_jsonlist():
-    year_label_text_jsons = [{"year": "2001", "label": 3, "text": "text 5"}]
+    year_label_text_jsons = [{'year': '2003', 'label': 4, 'text': 'text 6'}, {'year': '2002', 'label': 1, 'text': 'text 3'}, {'year': '2003', 'label': 3, 'text': 'text 5'}, {'year': '2003', 'label': 4, 'text': 'text 6'}, {'year': '2001', 'label': 1, 'text': 'text 2'}, {'year': '2003', 'label': 3, 'text': 'text 5'}, {'year': '2002', 'label': 2, 'text': 'text 4'}, {'year': '2001', 'label': 1, 'text': 'text 1'}]
     subset = 'train'
     output_path = path
     
@@ -194,5 +199,7 @@ if __name__ == '__main__':
     
     # extract_text()
     
-    train_test_split()
+    # train_test_split()
     # shuffle_set()
+    # build_subset_times()
+    # build_jsonlist()
