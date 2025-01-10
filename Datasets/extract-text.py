@@ -39,9 +39,20 @@ def extract_text(pdf_path, errors_path, error_data):
         
     specialChars = "!#$%^&*()"
     for specialChar in specialChars:
-        text = text.replace(specialChar, ' ')
+        text = text.replace(specialChar, '')
         
-    return text
+    return text if valid_text(text) > 0 else None
+
+def valid_text(texto):
+    try:
+        texto.encode('utf-8').decode('utf-8')  # Verificar si es UTF-8 válido
+        return True
+    except UnicodeDecodeError:
+        return False
+    finally:
+        patron_0 = r"[^\w\s,.áéíóúüñÁÉÍÓÚÜÑ]"
+        patron_1 = r"[\u0000-\u0008\u000B-\u001F\u007F]"
+        return bool(re.search(patron_0, texto)) and bool(re.search(patron_1, texto))
 
 def remove_diacritics(label):
     current_label = re.sub(
@@ -68,6 +79,6 @@ if __name__ == '__main__':
         jsonlist_per_year_dict[year] = jsonlist
         
     # print([item[:2] for item in list(jsonlist_per_year_dict.items())[:3]])
-    joblib.dump(jsonlist, os.path.join(output_path, f'pre-jsonlist.joblib'))
+    joblib.dump(jsonlist_per_year_dict, os.path.join(output_path, f'pre-jsonlist.joblib'))
     with open(os.path.join(output_path, f'pre-jsonlist.json'), 'w') as f:
         json.dump(jsonlist_per_year_dict, f)

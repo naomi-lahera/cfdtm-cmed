@@ -166,6 +166,43 @@ def build_jsonlist():
     with open(os.path.join(output_path, f"{subset}.jsonlist"), "w") as f:
         for record in jsonlist:
             f.write(json.dumps(record) + "\n")
+            
+def fix_pre_jsonlist():
+    path_ = 'Ciencias-Médicas/jsonlists'
+    joblib_: dict = dict(joblib.load(os.path.join(path_, f'pre-jsonlist.joblib')))
+            
+    with open(os.path.join(path_, f'pre-jsonlist.json'), 'r') as f:
+        json_ = json.load(f)
+
+    for year, jsonlist in joblib_.items():    
+        for index,  doc in enumerate(jsonlist):
+            if not valid_text(doc["text"]):
+                del joblib_[year][index]
+                
+    joblib.dump(joblib_, os.path.join(path_, f'pre-jsonlist.joblib'))
+    with open(os.path.join(path_, f'pre-jsonlist.json'), 'w') as f:
+        json.dump(joblib_, f)
+
+def delete_element():
+    dict_ = {"2002": [{"label": 0, "text": "casa"}, {"label": 1, "text": "casa"}, {"label": 2, "text": "casa"}], "2003": [{"label": 0, "text": "casa"}, {"label": 1, "text": "casa"}, {"label": 2, "text": "casa"}]}
+    del dict_["2002"][2]
+    del dict_["2003"][1]   
+    
+    print(dict_)
+     
+def valid_text(text):
+    # texto = '\u001b\u0014\u0011\u0018|\u0014\u001a \u0014\u0013\u0011\u0014|\u0014\u0017 \u001b\u0011\u0016||6tQWRPDV|||||7RV|\u0014\u0011\u0016\u001b \u0014\u0011\u0014\u0013\u0010\u0014\u0011\u0019\u0014|\u0014\u0011\u0017\u0016 \u0014\u0011\u0014\u0017\u0010\u0014\u0011\u0019\u0019|\u0014\u0011\u0019\u0015 \u0014\u0011\u0016\u0014\u0010\u0011 \u0013||6LELODQFLD|\u0014\u0011\u0019\u0018 \u0014\u0011\u0015\u0018\u0010\u0015\u0011\u0013\u0016|\u0014\u0011\u0016\u0013 \u0014\u0011\u0013\u0014\u0010\u0014\u0011\u0019\u001b|\u0014\u0011\u001a\u0017 \u0014\u0011\u0016\u0017\u0010\u0015\u0011\u0014\u0017'
+    texto = '\u001b\u0014\u0011\u0018 dxfjh'
+    try:
+        text.encode('utf-8').decode('utf-8')  # Verificar si es UTF-8 válido
+        return True
+    except UnicodeDecodeError:
+        return False
+    finally:
+        patron_0 = r"[^\w\s,.áéíóúüñÁÉÍÓÚÜÑ]"
+        patron_1 = r"[\u0000-\u0008\u000B-\u001F\u007F]"
+        return not bool(re.search(patron_0, text)) and not bool(re.search(patron_1, text))
+    
 
 if __name__ == '__main__':
     path = './unittest'
@@ -203,3 +240,8 @@ if __name__ == '__main__':
     # shuffle_set()
     # build_subset_times()
     # build_jsonlist()
+    
+    # fix_pre_jsonlist() No funciona
+    
+    # valid_text('jg')
+    # delete_element() 
