@@ -35,7 +35,7 @@ def extract_text(pdf_path, errors_path, error_data):
                 
     text = ''
     for page in range(len(data)):
-        text += data[page].to_dict()["text"]
+        text += data[page].to_dict()["text"] 
         
     specialChars = "!#$%^&*()"
     for specialChar in specialChars:

@@ -3,16 +3,17 @@ import numpy as np
 from tqdm import tqdm
 import scipy.sparse
 from topmost.preprocessing import Preprocessing
-import topmost.preprocessing
+import topmost.preprocessing.preprocessing as prepro
 from topmost.utils.logger import Logger
 import fasttext
+import fasttext.util
 import nltk
 from nltk.corpus import stopwords
 
-logger = Logger("WARNING")
+logger = Logger("DEBUG")
 nltk.download('stopwords')
 stopwords_es = set(stopwords.words('spanish'))
-fasttext_model = fasttext.load_model("cc.es.300.bin")
+fasttext.util.download_model('es', if_exists='ignore')  # Español
 
 def make_word_embeddings_es(vocab):
     # Cargar el modelo binario preentrenado
@@ -42,7 +43,7 @@ def make_word_embeddings_es(vocab):
 
     return scipy.sparse.csr_matrix(word_embeddings)
 
-topmost.preprocessing.make_word_embeddings = make_word_embeddings_es
+prepro.preprocessing.make_word_embeddings = make_word_embeddings_es
 
     
 

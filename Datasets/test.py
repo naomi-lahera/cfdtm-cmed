@@ -7,7 +7,9 @@ import pymupdf4llm
 import traceback
 import random
 import math
-
+import fitz
+import re
+    
 def time2id(_texts: dict, output_path):
     time2id = dict()
     time_index = 0

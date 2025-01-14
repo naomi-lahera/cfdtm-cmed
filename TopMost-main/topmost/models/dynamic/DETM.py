@@ -35,7 +35,7 @@ class DETM(nn.Module):
         if self.train_WE:
             self.rho = nn.Linear(self.rho_size, self.vocab_size, bias=False)
         else:
-            rho = nn.Embedding(pretrained_WE.size())
+            rho = nn.Embedding(pretrained_WE.shape[0], pretrained_WE.shape[1])
             rho.weight.data = torch.from_numpy(pretrained_WE)
             self.rho = rho.weight.data.clone().float().to(self.device)
 
