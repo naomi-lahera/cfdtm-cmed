@@ -1,6 +1,13 @@
 from topmost.models.dynamic.DETM import DETM
 import torch
 from torch import nn
+import torch.nn.functional as F
+
+import numpy as np
+from topmost import eva
+from gensim.corpora import Dictionary
+from gensim.models import CoherenceModel
+from topmost.data.file_utils import split_text_word
 
 class DETMFixed(DETM):
     def __init__(self, vocab_size, num_times, train_size, train_time_wordfreq, num_topics=50, train_WE=True, pretrained_WE=None, en_units=800, eta_hidden_size=200, rho_size=300, enc_drop=0.0, eta_nlayers=3, eta_dropout=0.0, delta=0.005, theta_act='relu', device='cpu'):
@@ -39,3 +46,32 @@ def get_theta_redefined(self, bows, times, eta=None): ## amortized inference
             return theta, kl_theta
         else:
             return theta
+        
+def _coherence_modified(reference_corpus, vocab, top_words, cv_type='c_v'):
+    print('🍀')
+    
+    split_top_words = split_text_word(top_words)
+    num_top_words = len(split_top_words[0])
+    for item in split_top_words:
+        assert num_top_words == len(item)
+
+    split_reference_corpus = split_text_word(reference_corpus)
+    dictionary = Dictionary(split_text_word(vocab))
+
+    #print(f"Corpus size: {len(split_reference_corpus)}")
+    #print(f"Dictionary size: {len(dictionary)}")
+    #print(f"Top words: {split_top_words}")
+
+    #print(type(split_reference_corpus[0]))
+    #print(type(reference_corpus[0]))
+
+    cm = CoherenceModel(texts=split_reference_corpus, dictionary=dictionary, topics=split_top_words, topn=num_top_words, coherence=cv_type)
+    cv_per_topic = cm.get_coherence_per_topic()
+    # print(f"Coherence scores per topic: {cv_per_topic}")
+
+    valid_scores = [score for score in cv_per_topic if not np.isnan(score)]
+    if not valid_scores:
+        raise ValueError("All coherence scores are NaN.")
+    score = np.mean(valid_scores)
+
+    return score
