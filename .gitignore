@@ -1,5 +1,7 @@
 .venv/
 temporary-files
 Datasets/Ciencias-Médicas/data/
+Datasets/Ciencias-Médicas/data/jsonlists/pre-jsonlist.joblib
+Datasets/Ciencias-Médicas/data/jsonlists/pre-jsonlist.json
 TopMost-main
 results/

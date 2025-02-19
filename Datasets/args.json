@@ -1,0 +1,17 @@
+{
+    "extract-text": {
+        "input_path" : "test_pocos_elementos/data/PDF",
+        "output_path" : "test_pocos_elementos/jsonlists",
+        "errors_path" : "test_pocos_elementos/data/Texts/extract-text-errors"
+    },
+
+    "pre-build-dataset":{
+        "input_path" : "test_pocos_elementos/jsonlists",
+        "metadata_output_path" : "test_pocos_elementos/CMed"
+    },
+    
+    "build-dataset":{
+        "jsonlist_path" : "test_pocos_elementos/jsonlists",
+        "output_path" : "test_pocos_elementos/CMed"
+    }
+}

@@ -1,3 +1,4 @@
+from utils import get_args_json, files
 import pymupdf4llm
 import os
 import re
@@ -62,10 +63,14 @@ def remove_diacritics(label):
     return normalize('NFC', current_label)
 
 if __name__ == '__main__':
-    input_path = 'Ciencias-Médicas/data/PDF'
-    output_path = 'Ciencias-Médicas/jsonlists'
-    errors_path = 'Ciencias-Médicas/data/Texts/extract-text-errors'
-    os.makedirs(errors_path, exist_ok=True)
+    args = get_args_json(files.extract_text)
+    
+    input_path = args['input_path']
+    output_path = args['output_path']
+    errors_path = args['errors_path']
+    
+    # os.makedirs(errors_path, exist_ok=True)
+    os.makedirs(output_path, exist_ok=True)
     
     jsonlist_per_year_dict = dict()
     for year in tqdm(os.listdir(input_path), desc='Extracting text from docs'):

@@ -1,10 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import os
-import joblib
-# import unidecode
 import requests
-import pymupdf4llm
 from tqdm import tqdm
 import json
 
@@ -126,10 +123,8 @@ def fix_errors(path):
                     print(f"❌ Error al descargar el PDF para '{art['downliadLink']}': {e}")
                     print('\\'*50)
                     
-path = './temporary-files'
+
 if __name__ == '__main__':
-    os.makedirs(path, exist_ok=True)
-    
     print('Configurando WebDriver')
     options = webdriver.ChromeOptions()
     options.add_argument("--headless") 
@@ -141,7 +136,7 @@ if __name__ == '__main__':
     urls = [
         'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=1#issues', 
         'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=2#issues',
-         'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=3#issues',
+        'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=3#issues',
         'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=4#issues'
         ]
     
@@ -150,17 +145,6 @@ if __name__ == '__main__':
     os.makedirs(download_path, exist_ok=True)
     os.makedirs(errors_path, exist_ok=True)
     
-    jsonlist_per_year = dict()
     for i, url in enumerate(urls):
         print(f'Descargando elementos: {url}')
-        current_dict: dict = get_docs(url, download_path, errors_path, i)
-        try:
-            last_key = list(jsonlist_per_year.items())[-1][0]
-            jsonlist_per_year[last_key].extend(current_dict[last_key])
-            del current_dict[last_key]
-        except:
-            pass
-        
-        jsonlist_per_year.update(current_dict)
-        
-    joblib.dump(jsonlist_per_year, os.path.join('Ciencias-Médicas/jsonlists/', 'jsonlist.joblib'))
+        get_docs(url, download_path, errors_path, i)

@@ -9,6 +9,7 @@ import fasttext
 import fasttext.util
 import nltk
 from nltk.corpus import stopwords
+from utils import get_args_json, files
 
 logger = Logger("DEBUG")
 nltk.download('stopwords')
@@ -48,8 +49,10 @@ prepro.preprocessing.make_word_embeddings = make_word_embeddings_es
     
 
 if __name__ == '__main__':
-    jsonlist_path = 'Ciencias-Médicas/jsonlists'
-    output_path = 'Ciencias-Médicas/CMed'
+    args = get_args_json(files.build_dataset)
+    
+    jsonlist_path = args['jsonlist_path']
+    output_path = args['output_path']
     
     os.makedirs(jsonlist_path, exist_ok=True)
     os.makedirs(output_path, exist_ok=True)
