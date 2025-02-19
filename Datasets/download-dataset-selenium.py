@@ -4,6 +4,7 @@ import os
 import requests
 from tqdm import tqdm
 import json
+from utils import *
 
 index = 0
 errors = 0
@@ -125,14 +126,13 @@ def fix_errors(path):
                     
 
 if __name__ == '__main__':
-    print('Configurando WebDriver')
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless") 
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-
-    driver = webdriver.Chrome(options=options)
-
+    args = get_args_json(files.download_dataset_selenium)
+    
+    download_path = args['download_path']
+    errors_path = args['errors_path']
+    os.makedirs(download_path, exist_ok=True)
+    os.makedirs(errors_path, exist_ok=True)
+    
     urls = [
         'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=1#issues', 
         'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=2#issues',
@@ -140,10 +140,13 @@ if __name__ == '__main__':
         'https://revhabanera.sld.cu/index.php/rhab/issue/archive?issuesPage=4#issues'
         ]
     
-    download_path = 'Ciencias-Médicas/data/PDF'
-    errors_path = 'Ciencias-Médicas/data/Texts/download-text-errors'
-    os.makedirs(download_path, exist_ok=True)
-    os.makedirs(errors_path, exist_ok=True)
+    print('Configurando WebDriver')
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless") 
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
+    driver = webdriver.Chrome(options=options)
     
     for i, url in enumerate(urls):
         print(f'Descargando elementos: {url}')

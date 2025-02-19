@@ -2,6 +2,7 @@ import json
 from enum import Enum
 
 class files(Enum):
+    download_dataset_selenium: 'download-dataset-selenium'
     extract_text = 'extract-text'
     pre_build_dataset = 'pre-build-dataset'
     build_dataset = 'build-dataset'

@@ -1,17 +1,22 @@
 {
+    "download-dataset-selenium": {
+        "download_path": "Ciencias-Médicas/data/PDF",
+        "errors_path": "Ciencias-Médicas/data/Texts/download-text-errors"
+    },
+
     "extract-text": {
-        "input_path" : "test_pocos_elementos/data/PDF",
-        "output_path" : "test_pocos_elementos/jsonlists",
-        "errors_path" : "test_pocos_elementos/data/Texts/extract-text-errors"
+        "input_path" : "Ciencias-Médicas/data/PDF",
+        "output_path" : "Ciencias-Médicas/jsonlists",
+        "errors_path" : "Ciencias-Médicas/data/Texts/extract-text-errors"
     },
 
     "pre-build-dataset":{
-        "input_path" : "test_pocos_elementos/jsonlists",
-        "metadata_output_path" : "test_pocos_elementos/CMed"
+        "input_path" : "Ciencias-Médicas/jsonlists",
+        "metadata_output_path" : "Ciencias-Médicas/CMed"
     },
     
     "build-dataset":{
-        "jsonlist_path" : "test_pocos_elementos/jsonlists",
-        "output_path" : "test_pocos_elementos/CMed"
+        "jsonlist_path" : "Ciencias-Médicas/jsonlists",
+        "output_path" : "Ciencias-Médicas/CMed"
     }
 }
