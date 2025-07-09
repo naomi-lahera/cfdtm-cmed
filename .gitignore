@@ -1,6 +1,4 @@
 .venv/
-Datasets/Ciencias-Médicas/data/
-Datasets/Ciencias-Médicas/jsonlists/pre-jsonlist.joblib
-Datasets/Ciencias-Médicas/jsonlists/pre-jsonlist.json
+Datasets
 TopMost-main
 results/
