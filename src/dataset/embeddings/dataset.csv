@@ -1,0 +1,49 @@
+text1,text2,score
+"El paciente presenta hipertensión arterial crónica.","El enfermo sufre de presión arterial elevada desde hace años.",4.8
+"Administrar 500 mg de paracetamol cada 8 horas.","Dar 500 miligramos de acetaminofén tres veces al día.",4.7
+"El tumor detectado es maligno.","El tumor hallado es benigno.",1.0
+"El paciente padece diabetes mellitus tipo 2.","El enfermo presenta niveles elevados de glucosa en sangre de forma crónica.",3.9
+"Se indica dieta hiposódica estricta.","Se recomienda limitar la sal en las comidas.",4.3
+"Aplicar crema antibiótica en la herida dos veces al día.","Administrar inyección intramuscular de antibiótico.",1.2
+"El paciente refiere dolor torácico al esfuerzo.","El enfermo comenta dolor en el pecho al caminar rápido.",4.6
+"Solicitar hemograma y pruebas de función renal.","Realizar análisis de sangre y creatinina.",4.1
+"El niño presenta fiebre de 39 grados.","El paciente tiene temperatura corporal normal.",0.5
+"El paciente requiere transfusión de sangre urgente.","Se recomienda controlar la presión arterial.",0.8
+"Administrar metformina 850 mg cada 12 horas.","Prescribir metformina dos veces al día.",4.9
+"Realizar electrocardiograma de control.","Hacer ECG de seguimiento al paciente.",4.8
+"Se detecta masa abdominal en flanco derecho.","El paciente presenta dolor lumbar izquierdo.",0.7
+"El enfermo presenta disnea en reposo.","El paciente tiene dificultad para respirar incluso estando sentado.",4.5
+"Suspender el uso de antiinflamatorios.","Continuar administrando antiinflamatorios.",0.5
+"El paciente sufre enfermedad pulmonar obstructiva crónica.","El enfermo padece EPOC.",5.0
+"Se indica reposo absoluto por 48 horas.","Recomiendan al paciente descanso total durante dos días.",4.6
+"Iniciar tratamiento con insulina de acción prolongada.","Comenzar terapia con insulina basal.",4.8
+"El tumor mide 3 cm y está localizado en el colon.","El nódulo de 2 cm se encuentra en el pulmón.",0.9
+"Se observa ictericia en la exploración física.","El paciente presenta coloración amarillenta de piel y mucosas.",4.7
+
+# -------------------------
+
+"El autor envió una carta al editor comentando resultados de la investigación.","Se remitió una misiva al director de la revista discutiendo hallazgos del estudio.",4.7
+"La misiva al editor resalta limitaciones del artículo original.","La carta enviada critica aspectos metodológicos del estudio publicado.",4.6
+"Estudiamos mecanismos moleculares de la inflamación.","Analizamos rutas bioquímicas que intervienen en procesos inflamatorios.",4.8
+"La investigación aborda ciencias clínicas biomédicas en cardiología.","El estudio trata sobre especialidades clínicas vinculadas al corazón.",4.2
+"Revisión sobre docencia en ciencias de la educación médica.","Análisis crítico de prácticas pedagógicas en enseñanza médica.",4.5
+"El trabajo describe un brote de dengue en la ciudad.","Se reporta un incremento epidémico de casos de dengue.",4.7
+"Estudio de técnicas quirúrgicas mínimamente invasivas.","Revisión de procedimientos laparoscópicos y sus ventajas.",4.4
+"Análisis de factores sociales que influyen en la salud.","Estudio sobre determinantes sociales y su impacto sanitario.",4.6
+"Desarrollo de un software para seguimiento de pacientes crónicos.","Implementación de una aplicación informática para controlar evolución clínica.",4.5
+"Editorial sobre la importancia de la ética en investigación médica.","Comentario editorial acerca de principios bioéticos en estudios clínicos.",4.8
+"Estudio bibliométrico de la producción científica en oncología cubana.","Análisis cienciométrico de publicaciones oncológicas nacionales.",4.7
+"Revisión histórica de la evolución de la cirugía en Cuba.","Análisis cronológico del desarrollo quirúrgico en el país.",4.9
+"Semblanza del doctor que fundó la cátedra de anatomía patológica.","Breve biografía del profesor pionero en patología.",4.6
+"El artículo bibliométrico analiza 500 publicaciones indexadas.","El estudio cienciométrico evalúa el impacto de 500 artículos científicos.",4.8
+"Editorial breve sobre avances en medicina regenerativa.","Comentario editorial sobre nuevas terapias con células madre.",4.7
+"Estudio descriptivo sobre prevalencia de hipertensión.","Investigación transversal acerca de la proporción de hipertensos.",4.8
+"Artículo de ciencias básicas sobre fisiología respiratoria.","Estudio que trata mecanismos de ventilación pulmonar.",4.5
+"Revisión en ciencias clínicas sobre complicaciones del infarto.","Artículo clínico acerca de secuelas tras infarto agudo.",4.6
+"Investigación educativa sobre métodos de enseñanza en semiología.","Análisis didáctico en la asignatura de semiología clínica.",4.5
+"Reporte epidemiológico de brote por virus chikungunya.","Informe sobre aumento inusual de casos de chikungunya.",4.6
+"Estudio quirúrgico de pacientes con hernia inguinal.","Revisión de intervenciones realizadas por hernia inguinal.",4.7
+"Artículo sobre impacto social del tabaquismo.","Estudio sobre consecuencias sociales y familiares del consumo de tabaco.",4.6
+"Desarrollo de herramienta informática para el control de inventario hospitalario.","Diseño de sistema digital para gestión de suministros médicos.",4.5
+"Texto histórico sobre la fundación del hospital Calixto García.","Reseña de los orígenes del hospital más antiguo de La Habana.",4.8
+"Semblanza dedicada a la primera mujer cirujana del país.","Breve nota biográfica de la pionera femenina en cirugía.",4.7
